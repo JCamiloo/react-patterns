@@ -1,55 +1,37 @@
-import { useShoppingCart } from '../hooks/useShoppingCart';
 import { ProductCard } from '../components';
 import { products } from '../data/products';
-import '../styles/custom-styles.css'
+import '../styles/custom-styles.css';
+
+const product = products[0];
 
 export const ShoppingPage = () => {
-  const { shoppingCart, onProductCountChange } = useShoppingCart();
-
   return (
     <div>
       <h1>Shopping Store</h1>
       <hr/>
-      
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap'
-      }}>
+
+      <ProductCard
+        key={product.id}
+        className="bg-dark"
+        product={product}
+        initialValues={{
+          count: 4,
+          maxCount: 50
+        }}
+      >
         {
-          products.map(product => (
-            <ProductCard
-              key={product.id}
-              className="bg-dark"
-              product={product}
-              onChange={onProductCountChange}
-              value={shoppingCart[product.id]?.count || 0}
-            >
+          ({ reset, increaseBy, isMaxCountReached }) => (
+            <>
               <ProductCard.Image className="custom-image"/>
               <ProductCard.Title className="white-text"/>
               <ProductCard.Buttons className="custom-buttons"/>
-            </ProductCard>
-          ))
+              <button onClick={reset}>Reset</button>
+              <button onClick={() => increaseBy(-2)}> -2 </button>
+              { !isMaxCountReached && <button onClick={() => increaseBy(2)}> +2 </button> }
+            </>
+          )
         }
-      </div>
-
-      <div className="shopping-cart">
-        {
-          Object.values(shoppingCart).map(product => (
-            <ProductCard
-              key={product.id}
-              className="bg-dark"
-              style={{ width: '100px' }}
-              product={product}
-              onChange={onProductCountChange}
-              value={product.count}
-            >
-              <ProductCard.Image className="custom-image"/>
-              <ProductCard.Buttons className="custom-buttons"/>
-            </ProductCard>
-          ))
-        }
-      </div>
+      </ProductCard>
     </div>
   )
 }
